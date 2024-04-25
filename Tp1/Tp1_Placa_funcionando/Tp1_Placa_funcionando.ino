@@ -1,4 +1,6 @@
-#include <Adafruit_SSD1306.h>
+
+#include <Adafruit_SH110X.h>
+//#include <Adafruit_SSD1306.h>
 #include <Adafruit_GFX.h>
 #include <splash.h>
 
@@ -7,21 +9,22 @@
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
 
-const int pinLedAzul = 32;      // Pin del LED
+
+const int pinLedAzul = 2;  // Pin del LED
 const int pinLedRojo = 23;  // Pin del LED Rojo
 const int pinBoton = 19;    // Pin del pulsador
 
 const int pinRelay = 18;    // Pin del Relay
 volatile int estadoPoteRelay; // Variable del nivel del potenciómetro mapeada al relay
 
-const int potePin = 25;     // Pin del potenciometro
+const int potePin = 32;     // Pin del potenciometro
 volatile int estadoPote;      // Variable del nivel del potenciómetro
 
 
 
 //-------- Uso Pulsador y led-------------------
 int contadorPulsador = 0;       // Contador de pulsaciones sobre el botón
-int estadoLedAzul = HIGH; // Estado del LED   
+int estadoLedAzul = LOW; // Estado del LED   
 int estadoBoton = LOW; // Estado del pulsador
 int ultimoEstado = LOW; // Estado anterior del pulsador   
 unsigned long ultimoRebote = 0; // Último tiempo de rebote del pulsador
@@ -29,7 +32,14 @@ int delayRebote = 50; // Tiempo de rebote del pulsador
 //----------------------------------------------
 
 //----------------Display-----------------------
-Adafruit_SSD1306 display = Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+
+//Placa fisica
+Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire);
+
+//Wokwi
+// Adafruit_SSD1306 display = Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+
+
 
 
 void setup() {
@@ -94,12 +104,12 @@ void loop() {
 void displayInit()
 {
   // Reemplazar las líneas comentadas por las correspondientes para probar con la placa en Clase
-  // display.begin(0x3C, true);
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.begin(0x3C, true);
+  //display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay(); // Vaciar la pantalla del display
   display.setTextSize(1); // Configurar tamaño de la letra
-  // display.setTextColor(SH110X_WHITE);
-  display.setTextColor(SSD1306_WHITE); // Configurar el color de la letra
+  display.setTextColor(SH110X_WHITE);
+  //display.setTextColor(SSD1306_WHITE); // Configurar el color de la letra
   display.setCursor(0, 0); // Setear el cursor en la posición 0,0 (esq. vertical izquierda)
   display.println("   TP N1 - IoT - 4K4");
   display.println("Datos de Compilacion:");

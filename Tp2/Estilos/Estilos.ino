@@ -58,7 +58,7 @@ void setup() {
   Serial.println(WiFi.localIP());
   server.begin();
   sensor.begin();
-  //displayInit();
+  displayInit();
 }
 
 void loop() {
@@ -132,56 +132,7 @@ void loop() {
             }
 
             // Muestra la página web
-            client.println("<!DOCTYPE html><html>");
-            client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><meta charset='utf-8' />");
-            client.println("<link rel=\"icon\" href=\"data:,\">");
-            client.println("<title>Servidor Web ESP32 - Grupo 11</title>");
-            // CSS to style the on/off buttons
-            // Feel free to change the background-color and font-size attributes to fit your preferences
-            client.println("<style>html { font-family: Sans-serif; display: inline-block; margin: 0px auto; text-align: center;}");
-            client.println(".button { background-color: #4CAF50; border: none; color: white; padding: 16px 40px;");
-            client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
-            client.println(".button2 {background-color: #555555;}</style></head>");
-
-            // Web Page Heading
-            client.println("<body><center><h1>Servidor Web ESP32 - Grupo 11</h1>");
-            client.println("<h3>Led Azul</h3>");
-            client.println("<p>Estado " + stringLedAzul + "</p>");
-            if (stringLedAzul == "off") {
-              client.println("<p><a href='/ledAzulOn'><button style='height:50px;width:150px;color:green'>ON</button></a></p>");
-            } else if(stringLedAzul == "on"){
-              client.println("<p><a href='/ledAzulOff'><button style='height:50px;width:150px;color:red'>OFF</button></a></p>");
-            }
-            client.println("<br />");
-            client.println("<h3>Datos del sensor DHT</h3>");
-            client.println("<p>Lectura de humedad  " + String(hum) + "</p>");
-            client.println("<p>Lectura de temperatura  " + String(temp) + "</p>");
-            client.println("<br />");
-            client.println("<h3>Datos del potenciometro</h3>");
-            client.println("<p>Nivel del potenciometro  " + String(estadoPote) + "%</p>");
-            client.println("<br />");
-            client.println("<h3>Estado del Relay</h3>");
-            client.println("<p>Estado del Relay  " + stringEstadoRelay + "</p>");
-
-            if (stringEstadoRelay == "off") {
-              client.println("<p><a href='/estadoRelayOn'><button style='height:50px;width:150px;color:green'>ON</button></a></p>");
-            } else if (stringEstadoRelay == "on") {
-              client.println("<p><a href='/estadoRelayOff'><button style='height:50px;width:150px;color:red'>OFF</button></a></p>");
-            }
-            client.println("<br />");
-            client.println("<h3>Intensidad del LED verde</h3>");
-            client.println("<form method='post' action='/cambiarIntensidadLed'>");
-            client.println("<input type='range' min='0' max='100' value='" + String(valorSlider) + "' name='intensidadLed'>");
-            client.println("<input type='submit' value='Submit'>");
-            client.println("</form>");
-            client.println("<br />");
-            client.println("<h3>Mensaje Display</h3>");
-            //client.println("<p>" + mensajeDisplayLeido + "</p>");
-            client.println("<form method='post' action='/mensajeDisplay'>");
-            client.println("<input type='text' value='" + mensajeDisplayLeido + "' name='mensajeDisplay'>");
-            client.println("<input type='submit' value='Submit'>");
-            client.println("<br />");
-            client.println("</center></body></html>");
+            mostrarPaginaWeb(client);
 
             // la respuesta HTTP temina con una linea en blanco
             client.println();
@@ -217,10 +168,68 @@ void displayInit(){
   display.display();
 }
 
+void mostrarPaginaWeb(WiFiClient client) {
+  // Muestra la página web
+  client.println("<!DOCTYPE html><html>");
+  client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><meta charset='utf-8' />");
+  client.println("<link rel=\"icon\" href=\"data:,\">");
+  client.println("<title>Servidor Web ESP32 - Grupo 11</title>");
+  // CSS to style the on/off buttons
+  client.println("<style>html { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;}");
+  client.println(".container { max-width: 600px; margin: 20px auto; padding: 20px; background-color: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);}");
+  client.println("h1 { color: #333; text-align: center;}");
+  client.println("h3 { color: #555; margin-top: 30px;}");
+  client.println("p { color: #777; margin-bottom: 10px;}");
+  client.println("button { background-color: #4CAF50; border: none; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin-top: 10px; cursor: pointer; border-radius: 5px; transition: background-color 0.3s ease;}");
+  client.println("button:hover { background-color: #45a049;}");
+  client.println("input[type='range'] { width: 100%; margin-top: 10px;}");
+  client.println("input[type='submit'] { background-color: #008CBA; color: white; border: none; padding: 10px 20px; text-decoration: none; display: inline-block; font-size: 16px; margin-top: 10px; cursor: pointer; border-radius: 5px; transition: background-color 0.3s ease;}");
+  client.println("input[type='submit']:hover { background-color: #005f80;}");
+  client.println("</style></head>");
+
+  // Web Page Heading
+  client.println("<body><div class=\"container\">");
+  client.println("<h1>Servidor Web ESP32 - Grupo 11</h1>");
+  client.println("<div>");
+  client.println("<h3>Led Azul</h3>");
+  client.println("<p>Estado " + stringLedAzul + "</p>");
+  if (stringLedAzul == "off") {
+    client.println("<p><a href='/ledAzulOn'><button>ON</button></a></p>");
+  } else if (stringLedAzul == "on") {
+    client.println("<p><a href='/ledAzulOff'><button>OFF</button></a></p>");
+  }
+  client.println("<br />");
+  client.println("<h3>Datos del sensor DHT</h3>");
+  client.println("<p>Lectura de humedad " + String(hum) + "</p>");
+  client.println("<p>Lectura de temperatura " + String(temp) + "</p>");
+  client.println("<br />");
+  client.println("<h3>Datos del potenciometro</h3>");
+  client.println("<p>Nivel del potenciometro " + String(estadoPote) + "%</p>");
+  client.println("<br />");
+  client.println("<h3>Estado del Relay</h3>");
+  client.println("<p>Estado del Relay " + stringEstadoRelay + "</p>");
+  if (stringEstadoRelay == "off") {
+    client.println("<p><a href='/estadoRelayOn'><button>ON</button></a></p>");
+  } else if (stringEstadoRelay == "on") {
+    client.println("<p><a href='/estadoRelayOff'><button>OFF</button></a></p>");
+  }
+  client.println("<br />");
+  client.println("<h3>Intensidad del LED verde</h3>");
+  client.println("<form method='post' action='/cambiarIntensidadLed'>");
+  client.println("<input type='range' min='0' max='100' value='" + String(valorSlider) + "' name='intensidadLed'>");
+  client.println("<input type='submit' value='Submit'>");
+  client.println("</form>");
+  client.println("<br />");
+  client.println("<h3>Mensaje Display</h3>");
+  client.println("<form method='post' action='/mensajeDisplay'>");
+  client.println("<input type='text' value='" + mensajeDisplayLeido + "' name='mensajeDisplay'>");
+  client.println("<input type='submit' value='Submit'>");
+  client.println("<br />");
+  client.println("</div></div></body></html>");
+}
 
 void leerPote() {
-  estadoPote = map(map(analogRead(pinPote), 0, 4095, 0, 255),0,255,0,100); // Leer el estado del pote y mapearlo a 8 bits
-  
+  estadoPote = map(map(analogRead(pinPote), 0, 4095, 0, 255), 0, 255, 0, 100); // Leer el estado del pote y mapearlo a 8 bits
 }
 
 void leerSensorDHT() {
@@ -236,10 +245,10 @@ void leerSensorDHT() {
   temp = lecturaTemperatura;
 }
 
-void actualizarDisplay (String mensaje){
-    display.clearDisplay();
-    display.setCursor(0,0);
-    display.println("Mensaje:\n");
-    display.println(mensaje);
-    display.display();
+void actualizarDisplay(String mensaje) {
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.println("Mensaje:\n");
+  display.println(mensaje);
+  display.display();
 }

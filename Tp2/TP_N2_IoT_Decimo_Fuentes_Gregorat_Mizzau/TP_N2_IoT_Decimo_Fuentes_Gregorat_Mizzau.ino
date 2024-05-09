@@ -69,20 +69,20 @@ void loop() {
   WiFiClient client = server.available();
 
   if (client) {
-    String currentLine = "";      //
-    while (client.connected()) {  // loop mientras el cliente está conectado
-      if (client.available()) {   // si hay bytes para leer desde el cliente. Devuelve el número de bytes disponibles para lectura en el búfer de entrada del cliente
-        char c = client.read();   // lee un byte
+    String currentLine = "";      
+    while (client.connected()) { 
+      if (client.available()) {   
+        char c = client.read();  
         header += c;
-        if (c == '\n') {  // si el byte es un caracter de salto de linea
+        if (c == '\n') {  
           if (currentLine.length() == 0) {
-            client.println("HTTP/1.1 200 OK");         //la solicitud HTTP se ha procesado correctamente.
-            client.println("Content-type:text/html");  //establece el tipo de contenido que se enviará al cliente en la respuesta. En este caso se trata de una página HTML.
-            client.println("Connection: close");       //la conexión entre el servidor y el cliente se cerrará después de enviar la respuesta
+            client.println("HTTP/1.1 200 OK");         
+            client.println("Content-type:text/html");  
+            client.println("Connection: close");   
             client.println();
 
             // enciende y apaga el GPIO
-            if (header.indexOf("GET /ledAzulOn") >= 0) {  //busca la primera aparición de "GET /on" y devuelve la posición donde se encuentra. Si no se encuentra devuelve -1
+            if (header.indexOf("GET /ledAzulOn") >= 0) {  
               digitalWrite(pinLedAzul, HIGH);
               stringLedAzul = "on";
               Serial.println("Led Azul ON");
@@ -132,21 +132,17 @@ void loop() {
             }
             // Muestra la página web
             mostrarPaginaWeb(client);
-
-            // la respuesta HTTP temina con una linea en blanco
             client.println();
             break;
-          } else {  // si tenemos una nueva linea limpiamos currentLine
+          } else {  
             currentLine = "";
           }
-        } else if (c != '\r') {  // si C es distinto al caracter de retorno de carro
-          currentLine += c;      // lo agrega al final de currentLine
+        } else if (c != '\r') {  
+          currentLine += c; 
         }
       }
     }
-    // Limpiamos la variable header
     header = "";
-    // Cerramos la conexión
     client.stop();
   }
 }
@@ -237,7 +233,7 @@ void displayInit() {
 
 
 void leerPote() {
-  estadoPote = map(map(analogRead(pinPote), 0, 4095, 0, 255), 0, 255, 0, 100);  // Leer el estado del pote y mapearlo a 8 bits
+  estadoPote = map(map(analogRead(pinPote), 0, 4095, 0, 255), 0, 255, 0, 100);
 }
 
 void leerSensorDHT() {
